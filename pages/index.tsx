@@ -15,7 +15,6 @@ import styles from "../styles/Home.module.css";
 
 const Home: NextPage = ({ surfData }: any) => {
     var beaches = Object.keys(surfData[0]).filter((x) => x !== "time");
-    console.log(beaches);
     return (
         <div className={styles.container}>
             <Head>
@@ -81,12 +80,14 @@ const Home: NextPage = ({ surfData }: any) => {
 };
 
 export async function getStaticProps() {
-    const res = await fetch("http://localhost:3000/api/metservice");
+    const baseUrl = process.env.API_BASE_URL;
+    const res = await fetch(baseUrl + "/api/metservice");
     const surfData = await res.json();
 
     return {
         props: {
             surfData,
+            baseUrl,
         },
     };
 }
