@@ -79,7 +79,7 @@ const Home: NextPage = ({ surfData }: any) => {
     );
 };
 
-export async function getStaticProps() {
+export async function getServerSideProps() {
     const baseUrl = process.env.API_BASE_URL;
     const res = await fetch(baseUrl + "/api/metservice");
     const surfData = await res.json();
