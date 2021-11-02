@@ -13,12 +13,27 @@ import {
 } from "recharts";
 import styles from "../styles/Home.module.css";
 
+const generateRanHex = () =>
+    "#" +
+    [...Array(6)]
+        .map(() => Math.floor(Math.random() * 16).toString(16))
+        .join("");
+
 const Home: NextPage = ({ surfData }: any) => {
     var beaches = Object.keys(surfData[0]).filter((x) => x !== "time");
+
+    const axisFormatter = (value: string) =>
+        new Date(value).toLocaleString("en-En", {
+            month: "short",
+            day: "numeric",
+            hour: "numeric",
+            minute: "numeric",
+        });
+
     return (
         <div className={styles.container}>
             <Head>
-                <title>Create Next App</title>
+                <title>Surf Reports</title>
                 <meta name="description" content="App showing surf reports" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
@@ -30,31 +45,24 @@ const Home: NextPage = ({ surfData }: any) => {
                     className={styles.responsiveContainer}
                 >
                     <LineChart data={surfData}>
-                        <XAxis dataKey="time" />
-                        <YAxis />
+                        <XAxis dataKey="time" tickFormatter={axisFormatter} />
+                        <YAxis
+                            label={{
+                                value: "Surf height (m)",
+                                angle: -90,
+                                position: "insideLeft",
+                            }}
+                        />
                         <Tooltip />
                         <Legend />
-                        <Line
-                            type="monotone"
-                            dataKey="Omaha"
-                            stroke="#94BCFF"
-                        />
-                        <Line type="monotone" dataKey="Piha" stroke="#1FAD81" />
-                        <Line
-                            type="monotone"
-                            dataKey="Muriwai"
-                            stroke="#BAE307"
-                        />
-                        <Line
-                            type="monotone"
-                            dataKey="PortWaikato"
-                            stroke="#FBAD5F"
-                        />
-                        <Line
-                            type="monotone"
-                            dataKey="Waihi"
-                            stroke="#3705AD"
-                        />
+                        {beaches.map((x) => (
+                            <Line
+                                key={x}
+                                type="monotone"
+                                dataKey={x}
+                                stroke={generateRanHex()}
+                            />
+                        ))}
                     </LineChart>
                 </ResponsiveContainer>
             </main>
