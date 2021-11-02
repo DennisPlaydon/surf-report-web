@@ -27,7 +27,6 @@ const Home: NextPage = ({ surfData }: any) => {
             month: "short",
             day: "numeric",
             hour: "numeric",
-            minute: "numeric",
         });
 
     return (
@@ -44,7 +43,7 @@ const Home: NextPage = ({ surfData }: any) => {
                     height={700}
                     className={styles.responsiveContainer}
                 >
-                    <LineChart data={surfData}>
+                    <LineChart data={surfData.slice(2, 5)}>
                         <XAxis dataKey="time" tickFormatter={axisFormatter} />
                         <YAxis
                             label={{
@@ -112,10 +111,14 @@ export async function getServerSideProps() {
             const waveFaceHeights =
                 individualDay["rows"][faceHeightIndex]["data"];
 
-            for (let index = 0; index < surfTimes.length; index++) {
-                const beachName: string = beach.name;
+            const startingIndexExcluding4AmTime = 1;
+            for (
+                let index = startingIndexExcluding4AmTime;
+                index < surfTimes.length;
+                index++
+            ) {
                 let setFaceEntry: any = {};
-                setFaceEntry[beachName] = waveFaceHeights[index]["setFace"];
+                setFaceEntry[beach.name] = waveFaceHeights[index]["setFace"];
 
                 var newArray = combinedForecast[surfTimes[index]["at"]];
                 newArray
