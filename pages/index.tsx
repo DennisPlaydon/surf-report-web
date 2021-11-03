@@ -1,7 +1,8 @@
 import type { NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
-import React from "react";
+import React, { useState } from "react";
+import { ButtonGroup, Button } from "react-bootstrap";
 import {
     ResponsiveContainer,
     LineChart,
@@ -20,7 +21,13 @@ const generateRanHex = () =>
         .join("");
 
 const Home: NextPage = ({ surfData }: any) => {
-    var beaches = Object.keys(surfData[0]).filter((x) => x !== "time");
+    const beaches = Object.keys(surfData[0]).filter((x) => x !== "time");
+
+    const getSurfDataForDate = (date: Date) =>
+        surfData.filter(
+            (x: any) => new Date(x.time).getDate() === date.getDate()
+        );
+    const [data, setData] = useState(getSurfDataForDate(new Date()));
 
     const axisFormatter = (value: string) =>
         new Date(value).toLocaleString("en-En", {
@@ -28,6 +35,10 @@ const Home: NextPage = ({ surfData }: any) => {
             day: "numeric",
             hour: "numeric",
         });
+
+    const getAverageSurfValue = (x: string) =>
+        data.reduce((prev: number, cur: any) => prev + Number(cur[x]), 0) /
+        data.length;
 
     return (
         <div className={styles.container}>
@@ -39,11 +50,46 @@ const Home: NextPage = ({ surfData }: any) => {
 
             <main className={styles.main}>
                 <h1 className={styles.title}>Surf Reports</h1>
-                <ResponsiveContainer
+                <div className={styles.grid}>
+                    {beaches.map((x) => (
+                        <div className={styles.card} key={x}>
+                            <p>{x}</p>
+                            <h2>{getAverageSurfValue(x).toFixed(1)}m</h2>
+                            <p>Wind: 7km/h</p>
+                        </div>
+                    ))}
+                    <ButtonGroup
+                        aria-label="Change forecast day"
+                        className={styles.buttonGroup}
+                    >
+                        <Button
+                            variant="outline-secondary"
+                            onClick={() =>
+                                setData(getSurfDataForDate(new Date()))
+                            }
+                        >
+                            Today
+                        </Button>
+                        <Button
+                            variant="outline-secondary"
+                            onClick={() => {
+                                var tomorrow = new Date();
+                                tomorrow.setDate(tomorrow.getDate() + 1);
+                                console.log(getSurfDataForDate(tomorrow));
+                                setData(getSurfDataForDate(tomorrow));
+                            }}
+                        >
+                            Tomorrow
+                        </Button>
+                        <Button variant="outline-secondary">5D</Button>
+                        <Button variant="outline-secondary">7D</Button>
+                    </ButtonGroup>
+                </div>
+                {/* <ResponsiveContainer
                     height={700}
                     className={styles.responsiveContainer}
                 >
-                    <LineChart data={surfData.slice(2, 5)}>
+                    <LineChart data={graphData}>
                         <XAxis dataKey="time" tickFormatter={axisFormatter} />
                         <YAxis
                             label={{
@@ -63,7 +109,7 @@ const Home: NextPage = ({ surfData }: any) => {
                             />
                         ))}
                     </LineChart>
-                </ResponsiveContainer>
+                </ResponsiveContainer> */}
             </main>
 
             <footer className={styles.footer}>
@@ -95,7 +141,7 @@ export async function getServerSideProps() {
         { name: "Waihi", region: "coromandel", location: "waihi-beach" },
     ];
 
-    var combinedForecast: { [time: string]: Array<Object> } = {};
+    var surfData: { [time: string]: Array<Object> } = {};
     for (let beachIndex = 0; beachIndex < beaches.length; beachIndex++) {
         const beach = beaches[beachIndex];
 
@@ -120,17 +166,20 @@ export async function getServerSideProps() {
                 let setFaceEntry: any = {};
                 setFaceEntry[beach.name] = waveFaceHeights[index]["setFace"];
 
-                var newArray = combinedForecast[surfTimes[index]["at"]];
+                var newArray = surfData[surfTimes[index]["at"]];
                 newArray
                     ? newArray.push(setFaceEntry)
                     : (newArray = [setFaceEntry]);
-                combinedForecast[surfTimes[index]["at"]] = newArray;
+                surfData[surfTimes[index]["at"]] = newArray;
             }
         });
     }
 
-    const formattedData = Object.entries(combinedForecast).map(
-        ([key, values]) => ({ time: key, ...Object.assign({}, ...values) })
+    const formattedData = Object.entries(surfData).map(
+        ([key, values]: [string, any]) => ({
+            time: key,
+            ...Object.assign({}, ...values),
+        })
     );
 
     return {
