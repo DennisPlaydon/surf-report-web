@@ -8,41 +8,87 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<{ time: string; beaches: any; }[]>
 ) {
+  const surfDateTimeIndex = 0;
+  const windLevelIndex = 2;
+  const faceHeightIndex = 5;
+
   const beaches = [
-    { name: "Piha", region: "piha", location: "piha" }, 
-    { name: "Omaha", region: "great-barrier", location: "omaha" }, 
-    { name: "Muriwai", region: "piha", location: "muriwai-beach" },
-    { name: "PortWaikato", region: "west-auckland", location: "port-waikato" }, 
-    { name: "Waihi", region: "coromandel", location: "waihi-beach" }
-  ]
+      { name: "Piha", region: "piha", location: "piha" },
+      { name: "Omaha", region: "great-barrier", location: "omaha" },
+      { name: "Muriwai", region: "piha", location: "muriwai-beach" },
+      {
+          name: "PortWaikato",
+          region: "west-auckland",
+          location: "port-waikato",
+      },
+      { name: "Waihi", region: "coromandel", location: "waihi-beach" },
+  ];
 
-  var combinedForecast: { [time: string] : Array<Object>} = {};
+  var surfData: { [time: string]: Array<Object> } = {};
+  var windData: { [time: string]: Array<Object> } = {};
   for (let beachIndex = 0; beachIndex < beaches.length; beachIndex++) {
-    const beach = beaches[beachIndex]
+      const beach = beaches[beachIndex];
 
-    const result = await fetch(
-      `https://www.metservice.com/publicData/webdata/marine/regions/${beach.region}/surf/locations/${beach.location}`
-    );
-    const json = await result.json();
-    const daysForecast: Array<String> = json["layout"]["primary"]["slots"]["main"]["modules"][0]["days"]
-    
-    daysForecast.forEach((individualDay: any) => {
-      const surfTimes = individualDay["rows"][surfDateTimeIndex]["data"]
-      const waveFaceHeights = individualDay["rows"][faceHeightIndex]["data"]
-  
-      for (let index = 0; index < surfTimes.length; index++) {
-        const beachName: string = beach.name;
-        let setFaceEntry: any = {};
-        setFaceEntry[beachName] = waveFaceHeights[index]["setFace"]
-  
-        var newArray = combinedForecast[surfTimes[index]["at"]]
-        newArray ? newArray.push(setFaceEntry) : newArray = [setFaceEntry]
-        combinedForecast[surfTimes[index]["at"]] = newArray
-      }
-    })
+      const result = await fetch(
+          `https://www.metservice.com/publicData/webdata/marine/regions/${beach.region}/surf/locations/${beach.location}`
+      );
+      const json = await result.json();
+      const daysForecast: Array<String> =
+          json["layout"]["primary"]["slots"]["main"]["modules"][0]["days"];
+
+      daysForecast.forEach((individualDay: any) => {
+          const individualDayForecastTimes =
+              individualDay["rows"][surfDateTimeIndex]["data"];
+          const waveFaceHeights =
+              individualDay["rows"][faceHeightIndex]["data"];
+          const windLevels = individualDay["rows"][windLevelIndex]["data"];
+
+          const startingIndexExcluding4AmTime = 1;
+          for (
+              let index = startingIndexExcluding4AmTime;
+              index < individualDayForecastTimes.length;
+              index++
+          ) {
+              let time = individualDayForecastTimes[index]["at"];
+
+              let setFaceEntry: any = {};
+              setFaceEntry[beach.name] = waveFaceHeights[index]["setFace"];
+
+              var surfEntriesForDate =
+                  surfData[time];
+              surfEntriesForDate
+                  ? surfEntriesForDate.push(setFaceEntry)
+                  : (surfEntriesForDate = [setFaceEntry]);
+              surfData[time] =
+                  surfEntriesForDate;
+
+              let windEntry: any = {};
+              windEntry[beach.name] = windLevels[index]["gust"];
+
+              var windEntriesForDate =
+                  windData[time];
+              windEntriesForDate
+                  ? windEntriesForDate.push(windEntry)
+                  : (windEntriesForDate = [windEntry]);
+              windData[time] =
+                  windEntriesForDate;
+          }
+      });
   }
 
-  const formattedData = Object.entries(combinedForecast).map(([key, values]) => ({ time: key, ...Object.assign({}, ...values) }));
+  const formattedSurfData = Object.entries(surfData).map(
+      ([key, values]: [string, any]) => ({
+          time: key,
+          ...Object.assign({}, ...values),
+      })
+  );
 
-  res.status(200).send(formattedData)
+  const formattedWindData = Object.entries(windData).map(
+      ([key, values]: [string, any]) => ({
+          time: key,
+          ...Object.assign({}, ...values),
+      })
+  );
+
+  res.status(200).send(formattedWindData)
 }
