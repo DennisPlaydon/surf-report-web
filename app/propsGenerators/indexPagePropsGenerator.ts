@@ -1,22 +1,11 @@
 import { IndexPageProps } from "../types/IndexPageProps";
+import { beaches } from "../beaches";
 
 export async function getIndexPageProps(): Promise<IndexPageProps> {
     const surfDateTimeIndex = 0;
     const windLevelIndex = 2;
     const periodIndex = 4;
     const faceHeightIndex = 5;
-
-    const beaches = [
-        { name: "Piha", region: "piha", location: "piha" },
-        { name: "Omaha", region: "great-barrier", location: "omaha" },
-        { name: "Muriwai", region: "piha", location: "muriwai-beach" },
-        {
-            name: "PortWaikato",
-            region: "west-auckland",
-            location: "port-waikato",
-        },
-        { name: "Waihi", region: "coromandel", location: "waihi-beach" },
-    ];
 
     var surfData: { [time: string]: Array<Object> } = {};
     var windData: { [time: string]: Array<Object> } = {};
