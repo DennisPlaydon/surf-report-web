@@ -1,5 +1,7 @@
 import { IndexPageProps } from "../types/IndexPageProps";
 import { beaches } from "../beaches";
+import { Beach } from "../types/Beach";
+import forecastData from "../helpers/forecastData";
 
 export async function getIndexPageProps(): Promise<IndexPageProps> {
     const surfDateTimeIndex = 0;
@@ -11,14 +13,9 @@ export async function getIndexPageProps(): Promise<IndexPageProps> {
     var windData: { [time: string]: Array<Object> } = {};
     var periodData: { [time: string]: Array<Object> } = {};
     for (let beachIndex = 0; beachIndex < beaches.length; beachIndex++) {
-        const beach = beaches[beachIndex];
-
-        const result = await fetch(
-            `https://www.metservice.com/publicData/webdata/marine/regions/${beach.region}/surf/locations/${beach.location}`
-        );
-        const json = await result.json();
-        const daysForecast: Array<String> =
-            json["layout"]["primary"]["slots"]["main"]["modules"][0]["days"];
+        const beach: Beach = beaches[beachIndex];
+        
+        const daysForecast: Array<String> = await forecastData(beach)
 
         daysForecast.forEach((individualDay: any) => {
             const individualDayForecastTimes =

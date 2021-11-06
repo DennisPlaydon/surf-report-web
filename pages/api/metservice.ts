@@ -18,7 +18,7 @@ export default async function handler(
       { name: "Omaha", region: "great-barrier", location: "omaha" },
       { name: "Muriwai", region: "piha", location: "muriwai-beach" },
       {
-          name: "PortWaikato",
+          name: "Port Waikato",
           region: "west-auckland",
           location: "port-waikato",
       },
