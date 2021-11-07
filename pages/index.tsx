@@ -2,6 +2,7 @@ import type { NextPage } from "next";
 import Head from "next/head";
 import React, { useState } from "react";
 import { ButtonGroup, Button } from "react-bootstrap";
+import SettingsModal from "../app/components/SettingsModal";
 import { getIndexPageProps } from "../app/propsGenerators/indexPagePropsGenerator";
 import { IndexPageProps } from "../app/types/IndexPageProps";
 import styles from "../styles/Home.module.css";
@@ -25,6 +26,7 @@ const Home: NextPage<IndexPageProps> = ({
     const [dailyPeriodData, setDailyPeriodData] = useState(
         filterDataForDate(new Date(), periodData)
     );
+    const [showModal, setShowModal] = useState(false);
 
     const average = (beachName: string, array: any) =>
         array.reduce(
@@ -41,8 +43,18 @@ const Home: NextPage<IndexPageProps> = ({
             </Head>
 
             <main className={styles.main}>
-                <h1 className={styles.title}>Surf Reports</h1>
                 <div className={styles.grid}>
+                    <button
+                        className={styles.settings}
+                        onClick={() => setShowModal(!showModal)}
+                    >
+                        <i className="bi bi-gear"></i>
+                    </button>
+                    <SettingsModal
+                        show={showModal}
+                        onHide={() => setShowModal(false)}
+                    />
+                    <h1 className={styles.title}>Surf Reports</h1>
                     {beaches.map((x) => (
                         <div className={styles.card} key={x}>
                             <p>{x}</p>
@@ -99,6 +111,58 @@ const Home: NextPage<IndexPageProps> = ({
                             }}
                         >
                             Tomorrow
+                        </Button>
+                        <Button
+                            variant="outline-secondary"
+                            onClick={() => {
+                                let twoDaysFromNow = new Date();
+                                twoDaysFromNow.setDate(
+                                    twoDaysFromNow.getDate() + 2
+                                );
+                                setDailySurfData(
+                                    filterDataForDate(twoDaysFromNow, surfData)
+                                );
+                                setDailyWindData(
+                                    filterDataForDate(twoDaysFromNow, windData)
+                                );
+                                setDailyPeriodData(
+                                    filterDataForDate(
+                                        twoDaysFromNow,
+                                        periodData
+                                    )
+                                );
+                            }}
+                        >
+                            2D
+                        </Button>
+                        <Button
+                            variant="outline-secondary"
+                            onClick={() => {
+                                let threeDaysFromNow = new Date();
+                                threeDaysFromNow.setDate(
+                                    threeDaysFromNow.getDate() + 3
+                                );
+                                setDailySurfData(
+                                    filterDataForDate(
+                                        threeDaysFromNow,
+                                        surfData
+                                    )
+                                );
+                                setDailyWindData(
+                                    filterDataForDate(
+                                        threeDaysFromNow,
+                                        windData
+                                    )
+                                );
+                                setDailyPeriodData(
+                                    filterDataForDate(
+                                        threeDaysFromNow,
+                                        periodData
+                                    )
+                                );
+                            }}
+                        >
+                            3D
                         </Button>
                     </ButtonGroup>
                 </div>
