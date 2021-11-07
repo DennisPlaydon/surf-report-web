@@ -36,8 +36,17 @@
     text-decoration: underline;
 }
 
+.settings {
+    font-size: 1.5rem;
+    margin-left: auto;
+    border: none;
+    background: none;
+    padding: 1rem;
+}
+
 .title {
-    margin: 0;
+    width: 100%;
+    margin: 2rem;
     line-height: 1.15;
     font-size: 4rem;
     text-align: center;
@@ -71,13 +80,8 @@
 }
 
 .buttonGroup {
-    align-self: flex-start;
     width: 100%;
     padding: 1rem;
-}
-
-.rainicon {
-    margin-left: 1rem;
 }
 
 @media (max-width: 400px) {
