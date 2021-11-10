@@ -1,7 +1,6 @@
 import { IndexPageProps } from "../types/IndexPageProps";
 import { beaches } from "../beaches";
-import { Beach } from "../types/Beach";
-import forecastData from "../helpers/forecastData";
+import getForecastData from "../helpers/getForecastData";
 
 export async function getIndexPageProps(): Promise<IndexPageProps> {
     const surfDateTimeIndex = 0;
@@ -12,16 +11,17 @@ export async function getIndexPageProps(): Promise<IndexPageProps> {
     var surfData: { [time: string]: Array<Object> } = {};
     var windData: { [time: string]: Array<Object> } = {};
     var periodData: { [time: string]: Array<Object> } = {};
-    for (let beachIndex = 0; beachIndex < beaches.length; beachIndex++) {
-        const beach: Beach = beaches[beachIndex];
-        
-        const daysForecast: Array<String> = await forecastData(beach)
 
-        daysForecast.forEach((individualDay: any) => {
-            const individualDayForecastTimes =
-                individualDay["rows"][surfDateTimeIndex]["data"];
-            const waveFaceHeights =
-                individualDay["rows"][faceHeightIndex]["data"];
+    let result;
+    let promises: Promise<{ beach: string; daysForecast: String[]; }>[] = [];
+    
+    beaches.forEach((beach) => promises.push(getForecastData(beach)))
+    result = await Promise.all(promises)
+  
+    result.forEach(beachForecast => {
+        beachForecast.daysForecast.forEach((individualDay: any) => {
+            const individualDayForecastTimes = individualDay["rows"][surfDateTimeIndex]["data"];
+            const waveFaceHeights = individualDay["rows"][faceHeightIndex]["data"];
             const windLevels = individualDay["rows"][windLevelIndex]["data"];
             const periodLevels = individualDay["rows"][periodIndex]["data"];
 
@@ -34,34 +34,34 @@ export async function getIndexPageProps(): Promise<IndexPageProps> {
                 let time = individualDayForecastTimes[index]["at"];
 
                 let setFaceEntry: any = {};
-                setFaceEntry[beach.name] = waveFaceHeights[index]["setFace"];
+                setFaceEntry[beachForecast.beach] = waveFaceHeights[index]["setFace"];
 
-                var surfEntriesForDate = surfData[time];
+                let surfEntriesForDate = surfData[time];
                 surfEntriesForDate
                     ? surfEntriesForDate.push(setFaceEntry)
                     : (surfEntriesForDate = [setFaceEntry]);
                 surfData[time] = surfEntriesForDate;
 
                 let windEntry: any = {};
-                windEntry[beach.name] = windLevels[index]["gust"];
+                windEntry[beachForecast.beach] = windLevels[index]["gust"];
 
-                var windEntriesForDate = windData[time];
+                let windEntriesForDate = windData[time];
                 windEntriesForDate
                     ? windEntriesForDate.push(windEntry)
                     : (windEntriesForDate = [windEntry]);
                 windData[time] = windEntriesForDate;
 
                 let periodEntry: any = {};
-                periodEntry[beach.name] = periodLevels[index]["period"];
+                periodEntry[beachForecast.beach] = periodLevels[index]["period"];
 
-                var periodEntriesForDate = periodData[time];
+                let periodEntriesForDate = periodData[time];
                 periodEntriesForDate
                     ? periodEntriesForDate.push(periodEntry)
                     : (periodEntriesForDate = [periodEntry]);
                 periodData[time] = periodEntriesForDate;
             }
-        });
-    }
+        })
+    })
 
     const formattedSurfData = Object.entries(surfData).map(
         ([key, values]: [string, any]) => ({
