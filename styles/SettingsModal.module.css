@@ -1,0 +1,13 @@
+.formBody {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.rangeWrapper {
+    margin: 1rem;
+    flex-direction: column;
+    flex: 1;
+}
+
+.slider {
+}

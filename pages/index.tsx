@@ -12,7 +12,9 @@ const Home: NextPage<IndexPageProps> = ({
     windData,
     periodData,
 }: IndexPageProps) => {
-    const beaches = Object.keys(surfData[0]).filter((x) => x !== "time");
+    const [beaches, setBeaches] = useState(
+        Object.keys(surfData[0]).filter((x) => x !== "time")
+    );
 
     const filterDataForDate = (date: Date, data: any) =>
         data.filter((x: any) => new Date(x.time).getDate() === date.getDate());
@@ -53,6 +55,7 @@ const Home: NextPage<IndexPageProps> = ({
                     <SettingsModal
                         show={showModal}
                         onHide={() => setShowModal(false)}
+                        beaches={beaches}
                     />
                     <h1 className={styles.title}>Surf Reports</h1>
                     {beaches.map((x) => (
