@@ -1,8 +1,8 @@
-import { IndexPageProps } from "../types/IndexPageProps";
+import { PageProps } from "../types/IndexPageProps";
 import { beaches } from "../beaches";
 import getForecastData from "../helpers/getForecastData";
 
-export async function getIndexPageProps(): Promise<IndexPageProps> {
+export async function getPageProps(): Promise<PageProps> {
     const surfDateTimeIndex = 0;
     const windLevelIndex = 2;
     const periodIndex = 4;
@@ -13,12 +13,12 @@ export async function getIndexPageProps(): Promise<IndexPageProps> {
     var periodData: { [time: string]: Array<Object> } = {};
 
     let result;
-    let promises: Promise<{ beach: string; daysForecast: String[]; }>[] = [];
-    
-    beaches.forEach((beach) => promises.push(getForecastData(beach)))
-    result = await Promise.all(promises)
-  
-    result.forEach(beachForecast => {
+    let promises: Promise<{ beach: string; daysForecast: String[] }>[] = [];
+
+    beaches.forEach((beach) => promises.push(getForecastData(beach)));
+    result = await Promise.all(promises);
+
+    result.forEach((beachForecast) => {
         beachForecast.daysForecast.forEach((individualDay: any) => {
             const individualDayForecastTimes = individualDay["rows"][surfDateTimeIndex]["data"];
             const waveFaceHeights = individualDay["rows"][faceHeightIndex]["data"];
@@ -46,9 +46,7 @@ export async function getIndexPageProps(): Promise<IndexPageProps> {
                 windEntry[beachForecast.beach] = windLevels[index]["gust"];
 
                 let windEntriesForDate = windData[time];
-                windEntriesForDate
-                    ? windEntriesForDate.push(windEntry)
-                    : (windEntriesForDate = [windEntry]);
+                windEntriesForDate ? windEntriesForDate.push(windEntry) : (windEntriesForDate = [windEntry]);
                 windData[time] = windEntriesForDate;
 
                 let periodEntry: any = {};
@@ -60,30 +58,28 @@ export async function getIndexPageProps(): Promise<IndexPageProps> {
                     : (periodEntriesForDate = [periodEntry]);
                 periodData[time] = periodEntriesForDate;
             }
-        })
-    })
+        });
+    });
 
-    const formattedSurfData = Object.entries(surfData).map(
-        ([key, values]: [string, any]) => ({
-            time: key,
-            ...Object.assign({}, ...values),
-        })
-    );
+    const formattedSurfData = Object.entries(surfData).map(([key, values]: [string, any]) => ({
+        time: key,
+        ...Object.assign({}, ...values),
+    }));
 
-    const formattedWindData = Object.entries(windData).map(
-        ([key, values]: [string, any]) => ({
-            time: key,
-            ...Object.assign({}, ...values),
-        })
-    );
+    const formattedWindData = Object.entries(windData).map(([key, values]: [string, any]) => ({
+        time: key,
+        ...Object.assign({}, ...values),
+    }));
 
-    const formattedPeriodData = Object.entries(periodData).map(
-        ([key, values]: [string, any]) => ({
-            time: key,
-            ...Object.assign({}, ...values),
-        })
-    );
+    const formattedPeriodData = Object.entries(periodData).map(([key, values]: [string, any]) => ({
+        time: key,
+        ...Object.assign({}, ...values),
+    }));
 
-    const props = { surfData: formattedSurfData, windData: formattedWindData, periodData: formattedPeriodData };
+    const props = {
+        surfData: formattedSurfData,
+        windData: formattedWindData,
+        periodData: formattedPeriodData,
+    };
     return props;
 }
