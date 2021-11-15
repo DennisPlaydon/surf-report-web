@@ -1,5 +1,3 @@
-import { Beach } from "../types/Beach";
-
 const getFutureDate = (daysInFuture: number) => { 
     let xDaysFromNow = new Date();
     xDaysFromNow.setDate(xDaysFromNow.getDate() + daysInFuture);

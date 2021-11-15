@@ -4,11 +4,12 @@ import React, { useState } from "react";
 import { ButtonGroup, Button } from "react-bootstrap";
 import SettingsModal from "../app/components/SettingsModal";
 import getFutureDate from "../app/helpers/getDate";
-import { getIndexPageProps } from "../app/propsGenerators/indexPagePropsGenerator";
-import { IndexPageProps } from "../app/types/IndexPageProps";
+import { getPageProps } from "../app/propsGenerators/pagePropsGenerator";
+import { PageProps } from "../app/types/IndexPageProps";
 import styles from "../styles/Home.module.css";
+import Link from "next/link";
 
-const Home: NextPage<IndexPageProps> = ({ surfData, windData, periodData }: IndexPageProps) => {
+const Home: NextPage<PageProps> = ({ surfData, windData, periodData }: PageProps) => {
     const filterDataForDate = (date: Date, data: any) =>
         data.filter((x: any) => new Date(x.time).getDate() === date.getDate());
 
@@ -37,18 +38,21 @@ const Home: NextPage<IndexPageProps> = ({ surfData, windData, periodData }: Inde
                     <SettingsModal show={showModal} onHide={() => setShowModal(false)} beaches={beaches} />
                     <h1 className={styles.title}>Surf Reports</h1>
                     {beaches.map((x) => (
-                        <div className={styles.card} key={x}>
-                            <p>{x}</p>
-                            <h2>{average(x, dailySurfData).toFixed(1)}m</h2>
-                            <p>
-                                <i className="bi bi-wind"></i> Wind - {average(x, dailyWindData).toFixed(1)}
-                                kts
-                            </p>
-                            <p>
-                                <i className="bi bi-tsunami"></i> Period -{" "}
-                                {Math.round(Number(average(x, dailyPeriodData)))}s
-                            </p>
-                        </div>
+                        <Link href={`/beach/${x.toLowerCase()}`} key={x}>
+                            <div className={styles.card}>
+                                <p>{x}</p>
+                                <h2>{average(x, dailySurfData).toFixed(1)}m</h2>
+                                <p>
+                                    <i className="bi bi-wind"></i> Wind -{" "}
+                                    {average(x, dailyWindData).toFixed(1)}
+                                    kts
+                                </p>
+                                <p>
+                                    <i className="bi bi-tsunami"></i> Period -{" "}
+                                    {Math.round(Number(average(x, dailyPeriodData)))}s
+                                </p>
+                            </div>
+                        </Link>
                     ))}
                     <ButtonGroup aria-label="Change forecast day" className={styles.buttonGroup}>
                         <Button
@@ -114,7 +118,7 @@ const Home: NextPage<IndexPageProps> = ({ surfData, windData, periodData }: Inde
 
 export async function getServerSideProps() {
     return {
-        props: await getIndexPageProps(),
+        props: await getPageProps(),
     };
 }
 

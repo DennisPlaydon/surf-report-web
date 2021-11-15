@@ -1,5 +1,5 @@
-export type IndexPageProps = {
-    surfData: any,
-    windData: any,
-    periodData: any
-}
+export type PageProps = {
+    surfData: any;
+    windData: any;
+    periodData: any;
+};
