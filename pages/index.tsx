@@ -13,11 +13,16 @@ const Home: NextPage<PageProps> = ({ surfData, windData, periodData }: PageProps
     const filterDataForDate = (date: Date, data: any) =>
         data.filter((x: any) => new Date(x.time).getDate() === date.getDate());
 
-    const [beaches, setBeaches] = useState(Object.keys(surfData[0]).filter((x) => x !== "time"));
     const [dailySurfData, setDailySurfData] = useState(filterDataForDate(new Date(), surfData));
     const [dailyWindData, setDailyWindData] = useState(filterDataForDate(new Date(), windData));
     const [dailyPeriodData, setDailyPeriodData] = useState(filterDataForDate(new Date(), periodData));
     const [showModal, setShowModal] = useState(false);
+
+    // TODO: Very crude way of sorting - it is showing the average yet only sorts by the evening forecast
+    const sortedBeaches = Object.entries(dailySurfData[2])
+        .sort(([, a]: any, [, b]: any) => b - a)
+        .map((x) => x[0])
+        .filter((x) => x !== "time");
 
     const average = (beachName: string, array: any) =>
         array.reduce((prev: number, cur: any) => prev + Number(cur[beachName]), 0) / array.length;
@@ -35,9 +40,13 @@ const Home: NextPage<PageProps> = ({ surfData, windData, periodData }: PageProps
                     <button className={styles.settings} onClick={() => setShowModal(!showModal)}>
                         <i className="bi bi-gear"></i>
                     </button>
-                    <SettingsModal show={showModal} onHide={() => setShowModal(false)} beaches={beaches} />
+                    <SettingsModal
+                        show={showModal}
+                        onHide={() => setShowModal(false)}
+                        beaches={sortedBeaches}
+                    />
                     <h1 className={styles.title}>Surf Reports</h1>
-                    {beaches.map((x) => (
+                    {sortedBeaches.map((x) => (
                         <Link href={`/beach/${x.toLowerCase()}`} key={x}>
                             <div className={styles.card}>
                                 <p>{x}</p>
