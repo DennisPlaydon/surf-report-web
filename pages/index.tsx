@@ -17,6 +17,7 @@ const Home: NextPage<PageProps> = ({ surfData, windData, periodData }: PageProps
     const [dailyWindData, setDailyWindData] = useState(filterDataForDate(new Date(), windData));
     const [dailyPeriodData, setDailyPeriodData] = useState(filterDataForDate(new Date(), periodData));
     const [showModal, setShowModal] = useState(false);
+    const [selectedButtonIndex, setSelectedButtonIndex] = useState(0);
 
     // TODO: Very crude way of sorting - it is showing the average yet only sorts by the evening forecast
     const sortedBeaches = Object.entries(dailySurfData[2])
@@ -70,8 +71,10 @@ const Home: NextPage<PageProps> = ({ surfData, windData, periodData }: PageProps
                     ))}
                     <ButtonGroup aria-label="Change forecast day" className={styles.buttonGroup}>
                         <Button
-                            variant="outline-secondary"
+                            variant={selectedButtonIndex === 0 ? "secondary" : "outline-secondary"}
                             onClick={() => {
+                                setSelectedButtonIndex(0);
+
                                 const today = new Date();
                                 setDailySurfData(filterDataForDate(today, surfData));
                                 setDailyWindData(filterDataForDate(today, windData));
@@ -81,8 +84,10 @@ const Home: NextPage<PageProps> = ({ surfData, windData, periodData }: PageProps
                             Today
                         </Button>
                         <Button
-                            variant="outline-secondary"
+                            variant={selectedButtonIndex === 1 ? "secondary" : "outline-secondary"}
                             onClick={() => {
+                                setSelectedButtonIndex(1);
+
                                 var tomorrow = getFutureDate(1);
                                 setDailySurfData(filterDataForDate(tomorrow, surfData));
                                 setDailyWindData(filterDataForDate(tomorrow, windData));
@@ -92,8 +97,10 @@ const Home: NextPage<PageProps> = ({ surfData, windData, periodData }: PageProps
                             Tomorrow
                         </Button>
                         <Button
-                            variant="outline-secondary"
+                            variant={selectedButtonIndex === 2 ? "secondary" : "outline-secondary"}
                             onClick={() => {
+                                setSelectedButtonIndex(2);
+
                                 let twoDaysFromNow = getFutureDate(2);
                                 setDailySurfData(filterDataForDate(twoDaysFromNow, surfData));
                                 setDailyWindData(filterDataForDate(twoDaysFromNow, windData));
