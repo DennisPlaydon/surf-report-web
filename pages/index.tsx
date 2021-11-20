@@ -97,17 +97,6 @@ const Home: NextPage<PageProps> = ({ surfData, windData, periodData }: PageProps
                         >
                             {getFutureDate(2).toLocaleDateString("EN-en", { weekday: "short" })}
                         </Button>
-                        <Button
-                            variant="outline-secondary"
-                            onClick={() => {
-                                let threeDaysFromNow = getFutureDate(3);
-                                setDailySurfData(filterDataForDate(threeDaysFromNow, surfData));
-                                setDailyWindData(filterDataForDate(threeDaysFromNow, windData));
-                                setDailyPeriodData(filterDataForDate(threeDaysFromNow, periodData));
-                            }}
-                        >
-                            {getFutureDate(3).toLocaleDateString("EN-en", { weekday: "short" })}
-                        </Button>
                     </ButtonGroup>
                 </div>
             </main>
