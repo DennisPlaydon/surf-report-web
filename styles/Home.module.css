@@ -94,4 +94,8 @@
         width: 100%;
         flex-direction: column;
     }
+
+    .card {
+        padding: 2rem 3.5rem;
+    }
 }
