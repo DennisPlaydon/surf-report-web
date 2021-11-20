@@ -24,8 +24,13 @@ const Home: NextPage<PageProps> = ({ surfData, windData, periodData }: PageProps
         .map((x) => x[0])
         .filter((x) => x !== "time");
 
-    const average = (beachName: string, array: any) =>
-        array.reduce((prev: number, cur: any) => prev + Number(cur[beachName]), 0) / array.length;
+    const average = (beachName: string, array: any) => {
+        const arrayNoNulls = array.filter((x: any) => x[beachName] !== null);
+        return (
+            arrayNoNulls.reduce((prev: number, cur: any) => prev + Number(cur[beachName]), 0) /
+            arrayNoNulls.length
+        );
+    };
 
     return (
         <div className={styles.container}>
