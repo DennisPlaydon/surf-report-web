@@ -36,26 +36,6 @@ const Beach: NextPage<PageProps> = ({ surfData, windData, periodData }: PageProp
             <main className={styles.main}>
                 <div className={styles.grid}>
                     <h1 className={styles.title}>{beach.name}</h1>
-                    <div className={styles.topleft}>
-                        <div className={styles.card}>
-                            <h2>Description</h2>
-                            <p>Located just north of Waikato. Port Waikato is a lovely drive. Strong swell</p>
-                        </div>
-                        <div className={styles.card}>
-                            <p>Weather</p>
-                            <div className={styles.weatherIcon}>
-                                <i className="bi bi-brightness-high"></i>
-                            </div>
-                        </div>
-                        <div className={styles.card}>
-                            <p>Rating</p>
-                            <h1>10</h1>
-                        </div>
-                        <div className={styles.card}>
-                            <h2>Another metric</h2>
-                            <p>9 degrees west</p>
-                        </div>
-                    </div>
                     <div className={styles.chartcard}>
                         <ForecastLineChart data={surfData} beachName={beach.name} title="Wave height" />
                     </div>
