@@ -8,7 +8,8 @@ export type ForecastLineChartProps = {
 };
 
 const ForecastLineChart = ({ data, beachName, title }: ForecastLineChartProps) => {
-    const labels = data.map((x: any) => x.time);
+    // const labels = data.map((x: any) => x.time);
+    const labels = data.map((x: any) => new Date(x.time).toLocaleDateString("EN-en", { weekday: "short" }));
     const values = data.map((x: any) => x[beachName]);
 
     const randomColour = () => Math.random() * 255;
@@ -33,8 +34,7 @@ const ForecastLineChart = ({ data, beachName, title }: ForecastLineChartProps) =
                     },
                     title: function (context: any) {
                         let tooltipHeading = context[0].label;
-                        return new Date(tooltipHeading).toLocaleString([], {
-                            weekday: "short",
+                        return new Date(tooltipHeading).toLocaleTimeString([], {
                             hour: "2-digit",
                             minute: "2-digit",
                         });
@@ -47,15 +47,6 @@ const ForecastLineChart = ({ data, beachName, title }: ForecastLineChartProps) =
             title: {
                 display: true,
                 text: `${title}`,
-            },
-        },
-        scales: {
-            x: {
-                ticks: {
-                    callback: function (value: string | number) {
-                        return new Date(labels[value]).toLocaleDateString("EN-en", { weekday: "short" });
-                    },
-                },
             },
         },
     };
