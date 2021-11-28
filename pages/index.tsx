@@ -8,6 +8,7 @@ import { getPageProps } from "../app/propsGenerators/pagePropsGenerator";
 import { PageProps } from "../app/types/IndexPageProps";
 import styles from "../styles/Home.module.css";
 import Link from "next/link";
+import { beaches } from "../app/beaches";
 
 const Home: NextPage<PageProps> = ({ surfData, windData, periodData }: PageProps) => {
     const filterDataForDate = (date: Date, data: any) =>
@@ -33,6 +34,11 @@ const Home: NextPage<PageProps> = ({ surfData, windData, periodData }: PageProps
         );
     };
 
+    const getMetserviceUrlForBeach = (x: string) => {
+        const fullBeachInfo = beaches.find((beach) => beach.name === x) ?? beaches[0];
+        return `https://www.metservice.com/marine/regions/${fullBeachInfo.region}/surf/locations/${fullBeachInfo.location}`;
+    };
+
     return (
         <div className={styles.container}>
             <Head>
@@ -53,21 +59,26 @@ const Home: NextPage<PageProps> = ({ surfData, windData, periodData }: PageProps
                     />
                     <h1 className={styles.title}>Surf Reports</h1>
                     {sortedBeaches.map((x) => (
-                        <Link href={`/beach/${x.toLowerCase()}`} key={x}>
-                            <div className={styles.card}>
-                                <p>{x}</p>
-                                <h2>{average(x, dailySurfData).toFixed(1)}m</h2>
-                                <p>
-                                    <i className="bi bi-wind"></i> Wind -{" "}
-                                    {average(x, dailyWindData).toFixed(1)}
-                                    kts
-                                </p>
-                                <p>
-                                    <i className="bi bi-tsunami"></i> Period -{" "}
-                                    {Math.round(Number(average(x, dailyPeriodData)))}s
-                                </p>
-                            </div>
-                        </Link>
+                        <div className={styles.card}>
+                            <a className={styles.metserviceLink} href={getMetserviceUrlForBeach(x)}>
+                                <i className="bi bi-box-arrow-up-right"></i>
+                            </a>
+                            <Link href={`/beach/${x.toLowerCase()}`} key={x}>
+                                <div className={styles.cardContent}>
+                                    <p>{x}</p>
+                                    <h2>{average(x, dailySurfData).toFixed(1)}m</h2>
+                                    <p>
+                                        <i className="bi bi-wind"></i> Wind -{" "}
+                                        {average(x, dailyWindData).toFixed(1)}
+                                        kts
+                                    </p>
+                                    <p>
+                                        <i className="bi bi-tsunami"></i> Period -{" "}
+                                        {Math.round(Number(average(x, dailyPeriodData)))}s
+                                    </p>
+                                </div>
+                            </Link>
+                        </div>
                     ))}
                     <ButtonGroup aria-label="Change forecast day" className={styles.buttonGroup}>
                         <Button
