@@ -78,6 +78,10 @@
     padding: 0 1.5rem;
 }
 
+.card > *:last-child {
+    padding-bottom: 1rem;
+}
+
 .card > *:first-child {
     margin-left: auto;
 }
@@ -87,10 +91,6 @@
     margin: 0.5rem;
     text-decoration: none;
     color: inherit;
-}
-
-.card > *:last-child {
-    padding-bottom: 1rem;
 }
 
 .card h2 {
@@ -115,7 +115,7 @@
         flex-direction: column;
     }
 
-    .card {
+    .card > *:last-child {
         padding: 2rem 3.5rem;
     }
 }

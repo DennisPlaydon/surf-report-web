@@ -59,11 +59,11 @@ const Home: NextPage<PageProps> = ({ surfData, windData, periodData }: PageProps
                     />
                     <h1 className={styles.title}>Surf Reports</h1>
                     {sortedBeaches.map((x) => (
-                        <div className={styles.card}>
+                        <div className={styles.card} key={x}>
                             <a className={styles.metserviceLink} href={getMetserviceUrlForBeach(x)}>
                                 <i className="bi bi-box-arrow-up-right"></i>
                             </a>
-                            <Link href={`/beach/${x.toLowerCase()}`} key={x}>
+                            <Link href={`/beach/${x.toLowerCase()}`}>
                                 <div className={styles.cardContent}>
                                     <p>{x}</p>
                                     <h2>{average(x, dailySurfData).toFixed(1)}m</h2>
