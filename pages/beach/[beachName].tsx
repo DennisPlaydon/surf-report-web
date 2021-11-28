@@ -20,6 +20,8 @@ const Beach: NextPage<PageProps> = ({ surfData, windData, periodData }: PageProp
         return <ErrorPage statusCode={404} />;
     }
 
+    const metserviceUrl = `https://www.metservice.com/marine/regions/${beach.region}/surf/locations/${beach.location}`;
+
     return (
         <div className={styles.container}>
             <Head>
@@ -28,11 +30,16 @@ const Beach: NextPage<PageProps> = ({ surfData, windData, periodData }: PageProp
                 <link rel="icon" href="/favicon.ico" />
             </Head>
 
-            <Link href="/">
-                <button className={styles.goBack}>
-                    <i className="bi bi-arrow-left"></i>
-                </button>
-            </Link>
+            <div className={styles.headerButtons}>
+                <Link href="/">
+                    <button className={styles.goBack}>
+                        <i className="bi bi-arrow-left"></i>
+                    </button>
+                </Link>
+                <a className={styles.metserviceLink} href={metserviceUrl}>
+                    <i className="bi bi-box-arrow-up-right"></i>
+                </a>
+            </div>
             <main className={styles.main}>
                 <div className={styles.grid}>
                     <h1 className={styles.title}>{beach.name}</h1>

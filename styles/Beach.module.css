@@ -2,6 +2,11 @@
     padding: 0 2rem;
 }
 
+.headerButtons {
+    display: flex;
+    justify-content: space-between;
+}
+
 .main {
     min-height: 100vh;
     flex: 1;
@@ -44,12 +49,24 @@
 }
 
 .goBack {
-    align-self: flex-start;
     font-size: 1.5rem;
-    margin-right: auto;
     border: none;
     background: none;
     padding-top: 1rem;
+}
+
+.metserviceLink {
+    font-size: 1.5rem;
+    border: none;
+    background: none;
+    padding-top: 1rem;
+    text-decoration: none;
+    color: black;
+}
+
+.metserviceLink:hover,
+.goBack:hover {
+    color: blue;
 }
 
 .title {
@@ -80,18 +97,6 @@
     transition: color 0.15s ease, border-color 0.15s ease;
     max-width: 500px;
     flex-grow: 1;
-}
-
-.topleft {
-    margin: 1rem;
-    max-width: 500px;
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: row;
-}
-
-.weatherIcon {
-    font-size: 3rem;
 }
 
 @media (max-width: 550px) {
