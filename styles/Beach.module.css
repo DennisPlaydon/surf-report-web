@@ -2,6 +2,14 @@
     padding: 0 2rem;
 }
 
+.spinner {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    height: 100vh;
+}
+
 .headerButtons {
     display: flex;
     justify-content: space-between;

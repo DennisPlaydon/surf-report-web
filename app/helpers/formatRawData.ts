@@ -1,8 +1,4 @@
-import { PageProps } from "../types/IndexPageProps";
-import { beaches } from "../beaches";
-import getForecastData from "../helpers/getForecastData";
-
-export async function getPageProps(): Promise<PageProps> {
+export const formatData = (data: any) => {
     const surfDateTimeIndex = 0;
     const windLevelIndex = 2;
     const periodIndex = 4;
@@ -12,13 +8,7 @@ export async function getPageProps(): Promise<PageProps> {
     var windData: { [time: string]: Array<Object> } = {};
     var periodData: { [time: string]: Array<Object> } = {};
 
-    let result;
-    let promises: Promise<{ beach: string; daysForecast: String[] }>[] = [];
-
-    beaches.forEach((beach) => promises.push(getForecastData(beach)));
-    result = await Promise.all(promises);
-
-    result.forEach((beachForecast) => {
+    data.forEach((beachForecast: any) => {
         beachForecast.daysForecast.forEach((individualDay: any) => {
             const individualDayForecastTimes = individualDay["rows"][surfDateTimeIndex]["data"];
             const waveFaceHeights = individualDay["rows"][faceHeightIndex]["data"];
@@ -82,4 +72,4 @@ export async function getPageProps(): Promise<PageProps> {
         periodData: formattedPeriodData,
     };
     return props;
-}
+};
