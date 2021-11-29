@@ -1,19 +1,30 @@
 import { useRouter } from "next/router";
 import { beaches } from "../../app/beaches";
 import ErrorPage from "next/error";
-import getForecastData from "../../app/helpers/getForecastData";
 import styles from "../../styles/Beach.module.css";
 import { NextPage } from "next";
 import React from "react";
 import Head from "next/head";
 import Link from "next/link";
 import ForecastLineChart from "../../app/components/ForecastLineChart";
-import { PageProps } from "../../app/types/IndexPageProps";
-import { getPageProps } from "../../app/propsGenerators/pagePropsGenerator";
+import { getAppData } from "../../app/helpers/getAppData";
+import { formatData } from "../../app/helpers/formatRawData";
+import { Spinner } from "react-bootstrap";
 
-const Beach: NextPage<PageProps> = ({ surfData, windData, periodData }: PageProps) => {
+const Beach: NextPage = () => {
     const router = useRouter();
     const { beachName } = router.query;
+
+    const { rawData, isLoading } = getAppData();
+
+    if (isLoading) {
+        return (
+            <div className={styles.spinner}>
+                <Spinner animation="border" />
+            </div>
+        );
+    }
+    const { surfData, windData, periodData } = formatData(rawData);
 
     const beach = beaches.find((x) => x.name.toLowerCase() === beachName);
     if (!beach) {
@@ -67,11 +78,5 @@ const Beach: NextPage<PageProps> = ({ surfData, windData, periodData }: PageProp
         </div>
     );
 };
-
-export async function getServerSideProps() {
-    return {
-        props: await getPageProps(),
-    };
-}
 
 export default Beach;

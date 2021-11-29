@@ -1,26 +1,34 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import React, { useState } from "react";
-import { ButtonGroup, Button } from "react-bootstrap";
+import React, { useEffect, useState } from "react";
+import { ButtonGroup, Button, Spinner } from "react-bootstrap";
 import SettingsModal from "../app/components/SettingsModal";
 import getFutureDate from "../app/helpers/getDate";
-import { getPageProps } from "../app/propsGenerators/pagePropsGenerator";
-import { PageProps } from "../app/types/IndexPageProps";
 import styles from "../styles/Home.module.css";
 import Link from "next/link";
+import { getAppData } from "../app/helpers/getAppData";
+import { formatData } from "../app/helpers/formatRawData";
 
-const Home: NextPage<PageProps> = ({ surfData, windData, periodData }: PageProps) => {
+const Home: NextPage = () => {
+    const [showModal, setShowModal] = useState(false);
+    const [buttonIndex, setButtonIndex] = useState(0);
+
+    const { rawData, isLoading } = getAppData();
+
+    if (isLoading) {
+        return (
+            <div className={styles.spinner}>
+                <Spinner animation="border" />
+            </div>
+        );
+    }
+    const { surfData, windData, periodData } = formatData(rawData);
+
     const filterDataForDate = (date: Date, data: any) =>
         data.filter((x: any) => new Date(x.time).getDate() === date.getDate());
 
-    const [dailySurfData, setDailySurfData] = useState(filterDataForDate(new Date(), surfData));
-    const [dailyWindData, setDailyWindData] = useState(filterDataForDate(new Date(), windData));
-    const [dailyPeriodData, setDailyPeriodData] = useState(filterDataForDate(new Date(), periodData));
-    const [showModal, setShowModal] = useState(false);
-    const [selectedButtonIndex, setSelectedButtonIndex] = useState(0);
-
     // TODO: Very crude way of sorting - it is showing the average yet only sorts by the evening forecast
-    const sortedBeaches = Object.entries(dailySurfData[2])
+    const sortedBeaches = Object.entries(filterDataForDate(new Date(), surfData)[2])
         .sort(([, a]: any, [, b]: any) => b - a)
         .map((x) => x[0])
         .filter((x) => x !== "time");
@@ -40,7 +48,6 @@ const Home: NextPage<PageProps> = ({ surfData, windData, periodData }: PageProps
                 <meta name="description" content="App showing surf reports" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-
             <main className={styles.main}>
                 <div className={styles.grid}>
                     <button className={styles.settings} onClick={() => setShowModal(!showModal)}>
@@ -56,55 +63,57 @@ const Home: NextPage<PageProps> = ({ surfData, windData, periodData }: PageProps
                         <Link href={`/beach/${x.toLowerCase()}`} key={x}>
                             <div className={styles.card}>
                                 <p>{x}</p>
-                                <h2>{average(x, dailySurfData).toFixed(1)}m</h2>
+                                <h2>
+                                    {average(
+                                        x,
+                                        filterDataForDate(getFutureDate(buttonIndex), surfData)
+                                    ).toFixed(1)}
+                                    m
+                                </h2>
                                 <p>
                                     <i className="bi bi-wind"></i> Wind -{" "}
-                                    {average(x, dailyWindData).toFixed(1)}
+                                    {average(
+                                        x,
+                                        filterDataForDate(getFutureDate(buttonIndex), windData)
+                                    ).toFixed(1)}
                                     kts
                                 </p>
                                 <p>
                                     <i className="bi bi-tsunami"></i> Period -{" "}
-                                    {Math.round(Number(average(x, dailyPeriodData)))}s
+                                    {Math.round(
+                                        Number(
+                                            average(
+                                                x,
+                                                filterDataForDate(getFutureDate(buttonIndex), periodData)
+                                            )
+                                        )
+                                    )}
+                                    s
                                 </p>
                             </div>
                         </Link>
                     ))}
                     <ButtonGroup aria-label="Change forecast day" className={styles.buttonGroup}>
                         <Button
-                            variant={selectedButtonIndex === 0 ? "secondary" : "outline-secondary"}
+                            variant={buttonIndex === 0 ? "secondary" : "outline-secondary"}
                             onClick={() => {
-                                setSelectedButtonIndex(0);
-
-                                const today = new Date();
-                                setDailySurfData(filterDataForDate(today, surfData));
-                                setDailyWindData(filterDataForDate(today, windData));
-                                setDailyPeriodData(filterDataForDate(today, periodData));
+                                setButtonIndex(0);
                             }}
                         >
                             Today
                         </Button>
                         <Button
-                            variant={selectedButtonIndex === 1 ? "secondary" : "outline-secondary"}
+                            variant={buttonIndex === 1 ? "secondary" : "outline-secondary"}
                             onClick={() => {
-                                setSelectedButtonIndex(1);
-
-                                var tomorrow = getFutureDate(1);
-                                setDailySurfData(filterDataForDate(tomorrow, surfData));
-                                setDailyWindData(filterDataForDate(tomorrow, windData));
-                                setDailyPeriodData(filterDataForDate(tomorrow, periodData));
+                                setButtonIndex(1);
                             }}
                         >
                             Tomorrow
                         </Button>
                         <Button
-                            variant={selectedButtonIndex === 2 ? "secondary" : "outline-secondary"}
+                            variant={buttonIndex === 2 ? "secondary" : "outline-secondary"}
                             onClick={() => {
-                                setSelectedButtonIndex(2);
-
-                                let twoDaysFromNow = getFutureDate(2);
-                                setDailySurfData(filterDataForDate(twoDaysFromNow, surfData));
-                                setDailyWindData(filterDataForDate(twoDaysFromNow, windData));
-                                setDailyPeriodData(filterDataForDate(twoDaysFromNow, periodData));
+                                setButtonIndex(2);
                             }}
                         >
                             {getFutureDate(2).toLocaleDateString("EN-en", { weekday: "short" })}
@@ -125,11 +134,5 @@ const Home: NextPage<PageProps> = ({ surfData, windData, periodData }: PageProps
         </div>
     );
 };
-
-export async function getServerSideProps() {
-    return {
-        props: await getPageProps(),
-    };
-}
 
 export default Home;
