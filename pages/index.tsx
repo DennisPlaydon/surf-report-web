@@ -71,7 +71,10 @@ const Home: NextPage = () => {
                                     m
                                 </h2>
                                 <p>
-                                    <i className="bi bi-wind"></i> Wind -{" "}
+                                    <span className={styles.windIcon}>
+                                        <i className="bi bi-wind"></i>
+                                    </span>{" "}
+                                    Wind -{" "}
                                     {average(
                                         x,
                                         filterDataForDate(getFutureDate(buttonIndex), windData)
@@ -79,7 +82,10 @@ const Home: NextPage = () => {
                                     kts
                                 </p>
                                 <p>
-                                    <i className="bi bi-tsunami"></i> Period -{" "}
+                                    <span className={styles.tsunamiIcon}>
+                                        <i className="bi bi-tsunami"></i>
+                                    </span>{" "}
+                                    Period -{" "}
                                     {Math.round(
                                         Number(
                                             average(
@@ -95,7 +101,7 @@ const Home: NextPage = () => {
                     ))}
                     <ButtonGroup aria-label="Change forecast day" className={styles.buttonGroup}>
                         <Button
-                            variant={buttonIndex === 0 ? "secondary" : "outline-secondary"}
+                            className={buttonIndex === 0 ? styles.buttonSelected : styles.buttonNonSelected}
                             onClick={() => {
                                 setButtonIndex(0);
                             }}
@@ -103,7 +109,7 @@ const Home: NextPage = () => {
                             Today
                         </Button>
                         <Button
-                            variant={buttonIndex === 1 ? "secondary" : "outline-secondary"}
+                            className={buttonIndex === 1 ? styles.buttonSelected : styles.buttonNonSelected}
                             onClick={() => {
                                 setButtonIndex(1);
                             }}
@@ -111,7 +117,7 @@ const Home: NextPage = () => {
                             Tomorrow
                         </Button>
                         <Button
-                            variant={buttonIndex === 2 ? "secondary" : "outline-secondary"}
+                            className={buttonIndex === 2 ? styles.buttonSelected : styles.buttonNonSelected}
                             onClick={() => {
                                 setButtonIndex(2);
                             }}
