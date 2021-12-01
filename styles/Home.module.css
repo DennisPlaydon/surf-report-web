@@ -97,6 +97,22 @@
     padding: 1rem;
 }
 
+.buttonGroup > *:hover {
+    background-color: #1d9ab3;
+    border: 1px solid #286572;
+}
+
+.buttonSelected {
+    background-color: #1d9ab3;
+    border: 1px solid #1d9ab3;
+}
+
+.buttonNonSelected {
+    background-color: white;
+    color: black;
+    border: 1px solid #1d9ab3;
+}
+
 @media (max-width: 460px) {
     .grid {
         width: 100%;

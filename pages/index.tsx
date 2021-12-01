@@ -95,7 +95,7 @@ const Home: NextPage = () => {
                     ))}
                     <ButtonGroup aria-label="Change forecast day" className={styles.buttonGroup}>
                         <Button
-                            variant={buttonIndex === 0 ? "secondary" : "outline-secondary"}
+                            className={buttonIndex === 0 ? styles.buttonSelected : styles.buttonNonSelected}
                             onClick={() => {
                                 setButtonIndex(0);
                             }}
@@ -103,7 +103,7 @@ const Home: NextPage = () => {
                             Today
                         </Button>
                         <Button
-                            variant={buttonIndex === 1 ? "secondary" : "outline-secondary"}
+                            className={buttonIndex === 1 ? styles.buttonSelected : styles.buttonNonSelected}
                             onClick={() => {
                                 setButtonIndex(1);
                             }}
@@ -111,7 +111,7 @@ const Home: NextPage = () => {
                             Tomorrow
                         </Button>
                         <Button
-                            variant={buttonIndex === 2 ? "secondary" : "outline-secondary"}
+                            className={buttonIndex === 2 ? styles.buttonSelected : styles.buttonNonSelected}
                             onClick={() => {
                                 setButtonIndex(2);
                             }}
