@@ -71,7 +71,10 @@ const Home: NextPage = () => {
                                     m
                                 </h2>
                                 <p>
-                                    <i className="bi bi-wind"></i> Wind -{" "}
+                                    <span className={styles.windIcon}>
+                                        <i className="bi bi-wind"></i>
+                                    </span>{" "}
+                                    Wind -{" "}
                                     {average(
                                         x,
                                         filterDataForDate(getFutureDate(buttonIndex), windData)
@@ -79,7 +82,10 @@ const Home: NextPage = () => {
                                     kts
                                 </p>
                                 <p>
-                                    <i className="bi bi-tsunami"></i> Period -{" "}
+                                    <span className={styles.tsunamiIcon}>
+                                        <i className="bi bi-tsunami"></i>
+                                    </span>{" "}
+                                    Period -{" "}
                                     {Math.round(
                                         Number(
                                             average(
